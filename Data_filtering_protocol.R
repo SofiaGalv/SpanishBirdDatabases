@@ -1,6 +1,8 @@
 
 ### DATA FILTERING PROTOCOL -----------------------------------------------------------------------
 
+library(data.table)
+
 ## 1. Read all databases (using "fread" function for SEO and eBird, and selecting from them just the required columns).
 
 table_MNCN <- read.table("MNCN.csv", header=T, sep=",")
@@ -8,7 +10,6 @@ table_EBD <- read.table("EBD.csv", header=T, sep=",")
 table_IEET <- read.table("IEET.csv", header=T, sep=",")
 table_AVIS <- read.table("AVIS.csv", header=T, sep=",")
 
-library(data.table)
 table_SEO <- fread("SEO.txt")
 table_SEO <- data.frame(year = tabla_SEO$year, country = tabla_SEO$countryCode, 
                         genus = tabla_SEO$genus, 

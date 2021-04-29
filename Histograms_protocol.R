@@ -1,3 +1,10 @@
+
+### HISTOGRAMS PROTOCOL
+-------------------------------------------------------------------------
+
+library(car)
+library(Hmisc)
+
 ##First, we tested the normality and homocedasticity (homogeneity of variance) of our samples. For Levene test, we took 1000 random subsamples, as the function only allow for a maximum of 5000 data.
 
 #For geographical distribution:
@@ -34,7 +41,6 @@ shapiro.test(Sample1_AVIS)
 
   # Levene test to test the homocedasticity (equal variances)
 
-library(car)
 Occurrences <- c(Sample1_MNCN$Occurrence.in.Sp, Sample1_EBD$Occurrence.in.Sp,
                  Sample1_IEET$Occurrence.in.Sp, Sample1_SEO$Occurrence.in.Sp,
                  Sample1_ebird$Occurrence.in.Sp, Sample1_AVIS)
@@ -101,7 +107,7 @@ shapiro.test(Sample1_AVIS)
     #None of the samples follow a normal distribution
 
   # Levene test to test the homocedasticity (equal variances)
-library(car)
+
 Wingspan <- c(Sample1_MNCN$Wingspan, Sample1_EBD$Wingspan,
               Sample1_IEET$Wingspan, Sample1_SEO$Wingspan,
               Sample1_ebird$Wingspan, Sample1_AVIS)
@@ -115,7 +121,7 @@ hartleyTest(Wingspan ~ Ddbb, Wingspan_df, center = "median")
       # The test reveals a p-value smaller than 0.05, indicating that there is significant difference between the group variances in the databases.
 
 ##HISTOGRAMS
-library(Hmisc)
+
   #Making high resolution plots (300ppi): (1)Geographical distribution, (2) Weight, (3) Wingspan, (4) log(weight), (5) log(wigspan).
 
 #MNCN

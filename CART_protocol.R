@@ -1,10 +1,10 @@
 
 ### CART TREES --------------------------------------------------------------
 
-## For building CART trees, we used the databases that gather the occurrences grouped by species.
-
 library(rpart.plot)
 library(rpart)
+
+## For building CART trees, we used the databases that gather the occurrences grouped by species.
 
   ##MNCN CART tree
 
