@@ -34,14 +34,6 @@ model <- rpart(Observaciones ~ Weight + Wingspan + Occurrence.in.Sp +
 par(xpd = NA)
 rpart.plot(model, type = 3, digits = 3, fallen.leaves = TRUE)
 
-  #IEET CART tree
-
-model <- rpart(Observaciones ~ Weight + Wingspan + Occurrence.in.Sp + 
-                 Endangered + Wetland + Farmland  + Cliff + Forest + Scrubland +
-                 Agroforest, data = IEET2, method = "anova" )
-par(xpd = NA)
-rpart.plot(model, type = 3, digits = 3, fallen.leaves = TRUE)
-
   #SEO CART tree
 
 model <- rpart(Observaciones ~ Weight + Wingspan + Occurrence.in.Sp + 
