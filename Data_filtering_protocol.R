@@ -1,39 +1,47 @@
-
-### DATA FILTERING PROTOCOL -----------------------------------------------------------------------
+################################################################################
+####################### DATA FILTERING PROTOCOL ################################ ################################################################################
 
 library(data.table)
+library(stringr)
+library(Hmisc)
+library(ggplot2)
+library(nVennR)
 
 ## 1. Read all databases (using "fread" function for SEO and eBird, and selecting from them just the required columns).
 
-table_MNCN <- read.table("MNCN.csv", header=T, sep=",")
-table_EBD <- read.table("EBD.csv", header=T, sep=",")
-table_IEET <- read.table("IEET.csv", header=T, sep=",")
+table_MNCN <- read.table("occurrence_MNCN.csv", header=T, sep=",")
+table_EBD <- read.table("occurrence_EBD.csv", header=T, sep=",")
+table_IEET <- read.table("occurrence_MAGRAMA.csv", header=T, sep=",")
 table_AVIS <- read.table("AVIS.csv", header=T, sep=",")
 
-table_SEO <- fread("SEO.txt")
-table_SEO <- data.frame(year = tabla_SEO$year, country = tabla_SEO$countryCode, 
-                        genus = tabla_SEO$genus, 
-                        specificEpithet = tabla_SEO$specificEpithet)
-table_ebird <- fread("ebird.txt")
-table_ebird <- data.frame(year = tabla_ebird$year, 
-                           country = tabla_ebird$countryCode, 
-                           genus = tabla_ebird$genus, 
-                           specificEpithet = tabla_ebird$specificEpithet)
+table_SEO <- fread("occurrence SEO.txt")
+table_SEO <- data.frame(year = table_SEO$year, country = table_SEO$countryCode, 
+                        genus = table_SEO$genus, 
+                        specificEpithet = table_SEO$specificEpithet,
+                        X = table_SEO$decimalLongitude,
+                        Y = table_SEO$decimalLatitude)
+table_ebird <- fread("occurrence ebird.txt")
+table_ebird <- data.frame(year = table_ebird$year, 
+                          country = table_ebird$countryCode, 
+                          genus = table_ebird$genus, 
+                          specificEpithet = table_ebird$specificEpithet,
+                          X = table_ebird$decimalLongitude,
+                          Y = table_ebird$decimalLatitude)
 
 ## 2. Create, for each database, a new "Species" column using "genus" and "specificEpithet" variables. For EBD database, also select just the rows which "Country" is Spain ("ES").
 
-table_MNCN$species <- paste(tabla_MNCN$genus, tabla_MNCN$specificEpithet)
+table_MNCN$species <- paste(table_MNCN$genus, table_MNCN$specificEpithet)
 
-table_EBD$species <- paste(tabla_EBD$genus, tabla_EBD$specificEpithet)
-table_EDB <- tabla_EBD[tabla_EBD$country == "ES", ]
+table_EBD$species <- paste(table_EBD$genus, table_EBD$specificEpithet)
+table_EDB <- table_EBD[table_EBD$country == "ES", ]
 
-table_IEET$species <- paste(tabla_IEET$genus, tabla_IEET$specificEpithet)
-table_SEO$species <- paste(tabla_SEO$genus, tabla_SEO$specificEpithet)
-table_ebird$species <- paste(tabla_ebird$genus, tabla_ebird$specificEpithet)
+table_IEET$species <- paste(table_IEET$genus, table_IEET$specificEpithet)
+table_SEO$species <- paste(table_SEO$genus, table_SEO$specificEpithet)
+table_ebird$species <- paste(table_ebird$genus, table_ebird$specificEpithet)
 
-   #AVIS is different, so select the 2ºcolumn.
+   #AVIS is different, so select the 3ºcolumn.
 
-colnames(table_AVIS)[2] <- "species"
+colnames(table_AVIS)[3] <- "species"
 
 ## 3. Read D'Amico database and call its "species" column.
 
@@ -168,7 +176,17 @@ AVIS$Occurrence.in.Sp = substr(AVIS$Occurrence.in.Sp, 1,
                                nchar(AVIS$Occurrence.in.Sp)-1)
 AVIS$Occurrence.in.Sp <- as.numeric(as.character(AVIS$Occurrence.in.Sp))
 
-## 11. Eliminate NA's rows from databases.
+## 11. Leave just the year (4 digits) in IEET and AVIS databases. 
+IEET$georeferencedDate <- as.character(IEET$georeferencedDate)
+IEET$georeferencedDate <- substr(IEET$georeferencedDate, 7, 
+                                 nchar(IEET$georeferencedDate))
+IEET$georeferencedDate <- as.numeric(IEET$georeferencedDate)
+
+AVIS$Fecha <- as.character(AVIS$Fecha)
+AVIS$Fecha <- str_sub(AVIS$Fecha, -4, nchar(AVIS$Fecha))
+AVIS$Fecha <- as.numeric(AVIS$Fecha)
+
+## 12. Eliminate NA's rows from databases.
 
 MNCN <- MNCN[!is.na(MNCN$Rank), ]
 EBD <- EBD[!is.na(EBD$Rank), ]
@@ -177,22 +195,23 @@ SEO <- SEO[!is.na(SEO$Rank), ]
 ebird <- ebird[!is.na(ebird$Rank), ]
 AVIS <- AVIS[!is.na(AVIS$Rank), ]
 
-## 12. To compare AVIS database with the others, as its occurrences are grouped by species names, it is necessary to create a new dataframe with all occurrences as separate rows. Do it for all the variables under study. In the case of the "Threat" variable, it is also necessary to transform it into a numeric object.
-
-avis_final <- rep(AVIS$Occurrence.in.Sp, AVIS$Observaciones)
-avis_final_Weight <- rep(AVIS$Weight, AVIS$Observaciones)
-avis_final_wingspan <- rep(AVIS$Wingspan, AVIS$Observaciones)
-avis_final_Wet <- rep(AVIS$Wetland, AVIS$Observaciones)
-avis_final_farm <- rep(AVIS$Farmland, AVIS$Observaciones)
-avis_final_agro <- rep(AVIS$Agroforest, AVIS$Observaciones)
-avis_final_fore <- rep(AVIS$Forest, AVIS$Observaciones)
-avis_final_scru <- rep(AVIS$Scrubland, AVIS$Observaciones)
-avis_final_clif <- rep(AVIS$Cliff, AVIS$Observaciones)
-
-avis_final_threat <- rep(AVIS$Status.in.Sp, AVIS$Observaciones)
-avis_final_threat <- as.numeric(as.character(avis_final_threat))
-
 ## 13. Draw plots, calculate some informative statistics (mean, median, quartiles) and calculate percentages for breeding habitats and number of endangered individuals. 
+
+  ## Years Boxplot
+tiff("Years.tiff", width = 6, height = 4, units = 'in', res = 300)
+windowsFonts(times = windowsFont("Times New Roman"))
+par(family = "times", font = 1, font.lab = 1, font.axis = 1)
+boxplot(MNCN$year, EBD$year, IEET$georeferencedDate,
+        SEO$year, ebird$year, AVIS$Fecha,
+        axes = F, horizontal = T, xlab = "Time (years)", boxwex = 0.6,
+        main = NULL, col = colcajas, ylim = c(1850,2020),
+        outline = F)
+axis(1)
+axis(2, labels = c("MNCN", "EBD", "IEET", "SEO", "EBIRD", "AVIS"), at = c(1:6),
+     las = 2)
+minor.tick(nx = 2, ny = 1)
+abline(v = 2020, col = "black", lwd = 2, lty = 3)
+dev.off()
 
   ## Occurrences Boxplot
 
@@ -202,7 +221,7 @@ windowsFonts(times = windowsFont("Times New Roman"))
 par(family = "times", font = 1, font.lab = 1, font.axis = 1)
 boxplot(MNCN$Occurrence.in.Sp, EBD$Occurrence.in.Sp, 
         IEET$Occurrence.in.Sp, SEO$Occurrence.in.Sp, 
-        ebird$Occurrence.in.Sp, avis_final, axes = F, 
+        ebird$Occurrence.in.Sp, AVIS$Occurrence.in.Sp, axes = F, 
         main = NULL, col = colcajas,
         ylab = "Geographical distribution (%)", boxwex = 0.6,
         outline = F, notch = TRUE)
@@ -219,7 +238,7 @@ windowsFonts(times = windowsFont("Times New Roman"))
 par(family = "times", font = 1, font.lab = 1, font.axis = 1)
 boxplot(log(MNCN$Weight), log(EBD$Weight), 
         log(IEET$Weight), log(SEO$Weight), 
-        log(ebird$Weight), log(avis_final_Weight), axes = F,
+        log(ebird$Weight), log(AVIS$Weight), axes = F,
         main = NULL, col = colcajas,
         ylab = "Weight (grams)", boxwex = 0.6,
         outline = F, notch = TRUE)
@@ -236,7 +255,7 @@ windowsFonts(times = windowsFont("Times New Roman"))
 par(family = "times", font = 1, font.lab = 1, font.axis = 1)
 boxplot(log(MNCN$Wingspan), log(EBD$Wingspan), 
         log(IEET$Wingspan), log(SEO$Wingspan), 
-        log(ebird$Wingspan), log(avis_final_wingspan), axes = F, 
+        log(ebird$Wingspan), log(AVIS$Wingspan), axes = F, 
         ylab = "Wingspan (centimetres)", boxwex = 0.6,
         main = NULL, col = colcajas,
         outline = F, notch = TRUE)
@@ -268,6 +287,13 @@ summary(IEET$Wingspan)
 summary(SEO$Wingspan)
 summary(ebird$Wingspan)
 summary(avis_final_wingspan)
+
+summary(MNCN$year)
+summary(EBD$year)
+summary(IEET$georeferencedDate)
+summary(SEO$year)
+summary(ebird$year)
+summary(AVIS$Fecha)
 
   ##Breeding habitat percentages
 
@@ -322,7 +348,16 @@ sum(SEO$Status.in.Sp %in% c("CR", "EN", "VU"), na.rm = T)/nrow(SEO)
 sum(ebird$Status.in.Sp %in% c("CR", "EN", "VU"), na.rm = T)/nrow(ebird)
 sum(avis_final_amenaza, na.rm = T)/length(avis_final_amenaza)
 
-############################################################################
+  ## Species Venn diagram
+bbdd_list <- list(MNCN = MNCN$species, EBD = EBD$species, IEET = IEET$species,
+                  SEO = SEO$species, EBIRD = ebird$species, AVIS = AVIS$species)
+sp_venn <- plotVenn(bbdd_list, systemShow = T)
+sp_venn2 <- plotVenn(nVennObj = sp_venn, systemShow = T)
+showSVG(nVennObj = sp_venn2, opacity = 0.1, borderWidth = 3, 
+        fontScale = 1.4, systemShow = T, outFile = "Species_diagram.svg")
+
+################################################################################
+################################################################################
 
 ## 14. On the other hand, for some analysis, we grouped all the occurrences by species. AVIS database was already in that format. As you can see, it is necessary to merge again each database with D'Amico one, and remove the "%" symbol from "Occurrence.in.Sp" column.
 
@@ -370,6 +405,15 @@ ebird2$Occurrence.in.Sp <- as.character(ebird2$Occurrence.in.Sp)
 ebird2$Occurrence.in.Sp = substr(ebird2$Occurrence.in.Sp, 1,
                                  nchar(ebird2$Occurrence.in.Sp)-1)
 ebird2$Occurrence.in.Sp <- as.numeric(as.character(ebird2$Occurrence.in.Sp))
+
+AVIS2 <- as.data.frame(table(AVIS$species))
+names(AVIS2) <- c("species", "Observaciones")
+AVIS2 <- merge(x = AVIS2, y = table_DAmico, 
+                by = "species", all.x = TRUE)
+AVIS2$Occurrence.in.Sp <- as.character(AVIS2$Occurrence.in.Sp)
+AVIS2$Occurrence.in.Sp = substr(AVIS2$Occurrence.in.Sp, 1,
+                                 nchar(AVIS2$Occurrence.in.Sp)-1)
+AVIS2$Occurrence.in.Sp <- as.numeric(as.character(AVIS2$Occurrence.in.Sp))
 
 ## 15. Create the new "accessible habitats" variable.
 
