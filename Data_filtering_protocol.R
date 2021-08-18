@@ -1,5 +1,6 @@
 ################################################################################
-####################### DATA FILTERING PROTOCOL ################################ ################################################################################
+####################### DATA FILTERING PROTOCOL ################################ 
+################################################################################
 
 library(data.table)
 library(stringr)
@@ -7,7 +8,8 @@ library(Hmisc)
 library(ggplot2)
 library(nVennR)
 
-## 1. Read all databases (using "fread" function for SEO and eBird, and selecting from them just the required columns).
+## 1. Read all databases (using "fread" function for SEO and eBird, and selecting 
+# from them just the required columns).
 
 table_MNCN <- read.table("occurrence_MNCN.csv", header=T, sep=",")
 table_EBD <- read.table("occurrence_EBD.csv", header=T, sep=",")
@@ -28,7 +30,9 @@ table_ebird <- data.frame(year = table_ebird$year,
                           X = table_ebird$decimalLongitude,
                           Y = table_ebird$decimalLatitude)
 
-## 2. Create, for each database, a new "Species" column using "genus" and "specificEpithet" variables. For EBD database, also select just the rows which "Country" is Spain ("ES").
+## 2. Create, for each database, a new "Species" column using "genus" and 
+# "specificEpithet" variables. For EBD database, also select just the rows 
+# which "Country" is Spain ("ES").
 
 table_MNCN$species <- paste(table_MNCN$genus, table_MNCN$specificEpithet)
 
@@ -39,7 +43,7 @@ table_IEET$species <- paste(table_IEET$genus, table_IEET$specificEpithet)
 table_SEO$species <- paste(table_SEO$genus, table_SEO$specificEpithet)
 table_ebird$species <- paste(table_ebird$genus, table_ebird$specificEpithet)
 
-   #AVIS is different, so select the 3ºcolumn.
+   #AVIS is different, so select the 3Âºcolumn.
 
 colnames(table_AVIS)[3] <- "species"
 
@@ -48,7 +52,8 @@ colnames(table_AVIS)[3] <- "species"
 table_DAmico <- read.table("DAmico.csv", header = T, sep = ",")
 colnames(table_DAmico)[2] <- "species"
 
-## 4. Check which species from each database does not match with D'Amico database, and save it in a ".csv" file for checking for taxonomic differences by experts.
+## 4. Check which species from each database does not match with D'Amico database,
+# and save it in a ".csv" file for checking for taxonomic differences by experts.
 
 no <- match(table_MNCN$species, table_DAmico$species)
 no_MNCN <- unique(table_MNCN$species [is.na(no)])
@@ -74,7 +79,11 @@ no <- match(table_AVIS$species, table_DAmico$species)
 no_AVIS <- unique(table_AVIS$species [is.na(no)])
 write.table(no_AVIS, "no_AVIS.csv", sep = ",", row.names = F)
 
-## 5. The new databases were returned with the synonyms of some species names that does not match at first. They are databases with 2 columns, one for the D'Amico species name and one for the original database species name. Now, read them to use them to change the species names in the original databases by their D'Amico synonyms.
+## 5. The new databases were returned with the synonyms of some species names that
+# does not match at first. They are databases with 2 columns, one for the D'Amico 
+# species name and one for the original database species name. Now, read them to 
+# use them to change the species names in the original databases by their D'Amico
+# synonyms.
 
 no_MNCN <- read.table("no_MNCNsyn.csv", header = T, sep = ",")
 no_EBD <- read.table("no_EBDsyn.csv", header = T, sep = ",")
@@ -83,7 +92,8 @@ no_SEO <- read.table("no_SEOsyn.csv", header = T, sep = ";")
 no_ebird <- read.table("no_ebirdsyn.csv", header = T, sep = ";")
 no_AVIS <- read.table("no_avissyn.csv", header = T, sep= ",")
 
-## 6. Create a function to change the species names of the original databases by their D'Amico synonyms.
+## 6. Create a function to change the species names of the original databases by
+# their D'Amico synonyms.
 
 change_names <- function(synonyms, table) {
   for (i in 1:nrow(synonyms)) {
@@ -95,7 +105,8 @@ change_names <- function(synonyms, table) {
   table
 }
 
-## 7. Prepare the synonym database to be used in the function, selecting just the D'Amico columns entries that contain information.  
+## 7. Prepare the synonym database to be used in the function, selecting just the 
+# D'Amico columns entries that contain information.  
 
 unique(no_MNCN$DAmico)[-4]
 synonyms_MNCN <- no_MNCN[no_MNCN$DAmico %in% unique(no_MNCN$DAmico)[-4], ]
@@ -144,7 +155,8 @@ ebird <- merge(x = ebird, y = table_DAmico, by = "species", all.x = TRUE)
 
 AVIS <- merge(x = AVIS, y = table_DAmico,by = "species", all.x = TRUE)
 
-## 10. Eliminate the "%" symbol from "Occurrences.in.Sp" column, and transform it into a numeric object.
+## 10. Eliminate the "%" symbol from "Occurrences.in.Sp" column, and transform
+# it into a numeric object.
 
 MNCN$Occurrence.in.Sp <- as.character(MNCN$Occurrence.in.Sp)
 MNCN$Occurrence.in.Sp = substr(MNCN$Occurrence.in.Sp, 1, 
@@ -195,7 +207,8 @@ SEO <- SEO[!is.na(SEO$Rank), ]
 ebird <- ebird[!is.na(ebird$Rank), ]
 AVIS <- AVIS[!is.na(AVIS$Rank), ]
 
-## 13. Draw plots, calculate some informative statistics (mean, median, quartiles) and calculate percentages for breeding habitats and number of endangered individuals. 
+## 13. Draw plots, calculate some informative statistics (mean, median, quartiles)
+# and calculate percentages for breeding habitats and number of endangered individuals. 
 
   ## Years Boxplot
 tiff("Years.tiff", width = 6, height = 4, units = 'in', res = 300)
@@ -359,7 +372,10 @@ showSVG(nVennObj = sp_venn2, opacity = 0.1, borderWidth = 3,
 ################################################################################
 ################################################################################
 
-## 14. On the other hand, for some analysis, we grouped all the occurrences by species. AVIS database was already in that format. As you can see, it is necessary to merge again each database with D'Amico one, and remove the "%" symbol from "Occurrence.in.Sp" column.
+## 14. On the other hand, for some analysis, we grouped all the occurrences by 
+# species. AVIS database was already in that format. As you can see, it is 
+# necessary to merge again each database with D'Amico one, and remove the "%" 
+# symbol from "Occurrence.in.Sp" column.
 
 MNCN2 <- as.data.frame(table(MNCN$species))
 names(MNCN2) <- c("species", "Observaciones")
@@ -432,24 +448,25 @@ SEO2$Accesible[SEO2$Accesible>1] <- 1
 ebird2$Accesible <- ebird2$Agroforest + ebird2$Farmland
 ebird2$Accesible[ebird2$Accesible>1] <- 1
 
-AVIS$Accesible <- AVIS$Agroforest + AVIS$Farmland
-AVIS$Accesible[AVIS$Accesible>1] <- 1
+AVIS2$Accesible <- AVIS2$Agroforest + AVIS2$Farmland
+AVIS2$Accesible[AVIS2$Accesible>1] <- 1
 
-## 16. Create a new "Threat" variable that includes "EN", "VU", "CR" categories from "Status.in.Sp".
+## 16. Create a new "Threat" variable that includes "EN", "VU", "CR"
+# categories from "Status.in.Sp".
 
 EBD2$Endangered <- EBD2$Status.in.Sp %in% c("EN", "VU", "CR")
 MNCN2$Endangered <- MNCN2$Status.in.Sp %in% c("EN", "VU", "CR")
 IEET2$Endangered <- IEET2$Status.in.Sp %in% c("EN", "VU", "CR")
 SEO2$Endangered <- SEO2$Status.in.Sp %in% c("EN", "VU", "CR")
 ebird2$Endangered <- ebird2$Status.in.Sp %in% c("EN", "VU", "CR")
-AVIS$Endangered <- AVIS$Status.in.Sp %in% c("EN", "VU", "CR")
+AVIS2$Endangered <- AVIS2$Status.in.Sp %in% c("EN", "VU", "CR")
 
 ## 17. In the case, remove NAs from the databases.
 
 MNCN2 <- MNCN2[!is.na(MNCN2$Rank), ]
 EBD2 <- EBD2[!is.na(EBD2$Rank), ]
 IEET2 <- IEET2[!is.na(IEET2$Rank), ]
-AVIS <- AVIS[!is.na(AVIS$Rank), ]
+AVIS2 <- AVIS[!is.na(AVIS2$Rank), ]
 ebird2 <- ebird2[!is.na(ebird2$Rank), ]
 SEO2 <- SEO2[!is.na(SEO2$Rank), ]
 
