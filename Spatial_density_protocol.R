@@ -8,11 +8,11 @@ library(rnaturalearthhires)
 library(sf)
 library(rAvis)
 
-##1. Obtain the map of Spain.
+## 1. Obtain the map of Spain.
 Spain <- ne_states(country = 'spain')
 Spain <- st_as_sf(Spain)
 
-##2. With Passer domesticus
+## 2. With Passer domesticus
 IEET_pasdomest <- IEET[IEET$species == "Passer domesticus",]
 
 SEO_pasdomest <- SEO[SEO$species == "Passer domesticus",]
@@ -73,7 +73,7 @@ ggplot() +
   ylim(25,47) +
   theme_void()
 
-##2. With Passer hispaniolensis
+## 3. With Passer hispaniolensis
 IEET_pashisp <- IEET[IEET$species == "Passer hispaniolensis",]
 
 SEO_pashisp <- SEO[SEO$species == "Passer hispaniolensis",]
