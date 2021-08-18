@@ -2,12 +2,13 @@
 ###################### GLM AND CART TREES PROTOTOL #############################
 ################################################################################
 
-###### CART TREES ##############################################################
+############################# CART TREES #######################################
 
 library(rpart.plot)
 library(rpart)
 
-## For building CART trees, we used the databases that gather the occurrences grouped by species.
+## For building CART trees, we used the databases that gather the occurrences 
+# grouped by species.
 
   ##MNCN CART tree
 
@@ -46,7 +47,7 @@ rpart.plot(CART_EBIRD, type = 3, digits = 3, fallen.leaves = TRUE)
 
 CART_AVIS <- rpart(Observaciones ~ Weight + Wingspan + Occurrence.in.Sp + 
                  Endangered + Wetland + Farmland  + Cliff + Forest + Scrubland +
-                 Agroforest, data = AVIS, method = "anova" )
+                 Agroforest, data = AVIS2, method = "anova" )
 par(xpd = NA)
 rpart.plot(CART_AVIS, type = 3, digits = 3, fallen.leaves = TRUE)
 
@@ -96,7 +97,7 @@ modelo2 <- glm(datos$Observaciones ~ datos$Weight +
 summary(model_eBird)
 
 # GLM for AVIS database
-datos <-AVIS
+datos <-AVIS2
 model_AVIS <- glm(datos$Observaciones ~ datos$Weight +
                     datos$Occurrence.in.Sp +
                     datos$Endangered + datos$Wetland +
