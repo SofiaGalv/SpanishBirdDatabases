@@ -153,6 +153,17 @@ hist(log(MNCN$Wingspan), main = "",
 minor.tick(nx = 4, ny = 2)
 dev.off()
 
+tiff("MNCNYears.tiff", width = 7, height = 5, units = 'in', res = 300)
+windowsFonts(times = windowsFont("Times New Roman")) 
+par(family = "times", font = 1, font.lab = 1, font.axis = 1)
+hist(log(MNCN$years), main = "",
+     xlab="Time (years)", 
+     border="bisque4", 
+     col="bisque3", xlim = c(2,6),
+     breaks = 20)
+minor.tick(nx = 4, ny = 2)
+dev.off()
+
 # EBD
 tiff("EBDGeodistribution.tiff", width = 7, height = 5, units = 'in', res = 300)
 windowsFonts(times = windowsFont("Times New Roman")) 
@@ -183,6 +194,17 @@ windowsFonts(times = windowsFont("Times New Roman"))
 par(family = "times", font = 1, font.lab = 1, font.axis = 1)
 hist(log(EBD$Wingspan), main = "",
      xlab="Wingspan (centimetres)", 
+     border="bisque4", 
+     col="bisque3", xlim = c(2,6),
+     breaks = 20)
+minor.tick(nx = 4, ny = 2)
+dev.off()
+
+tiff("EBDYears.tiff", width = 7, height = 5, units = 'in', res = 300)
+windowsFonts(times = windowsFont("Times New Roman")) 
+par(family = "times", font = 1, font.lab = 1, font.axis = 1)
+hist(log(EBD$year), main = "",
+     xlab="Time (years)", 
      border="bisque4", 
      col="bisque3", xlim = c(2,6),
      breaks = 20)
@@ -223,6 +245,17 @@ hist(log(IEET$Wingspan), main = "",
 minor.tick(nx = 4, ny = 2)
 dev.off()
 
+tiff("IEETYears.tiff", width = 7, height = 5, units = 'in', res = 300)
+windowsFonts(times = windowsFont("Times New Roman")) 
+par(family = "times", font = 1, font.lab = 1, font.axis = 1)
+hist(log(IEET$georeferencedDate), main = "",
+     xlab="Time (years)", 
+     border="bisque4", 
+     col="bisque3", xlim = c(2,6),
+     breaks = 20)
+minor.tick(nx = 4, ny = 2)
+dev.off()
+
 # SEO
 tiff("SEOGeodistribution.tiff", width = 7, height = 5, units = 'in', res = 300)
 windowsFonts(times = windowsFont("Times New Roman")) 
@@ -251,6 +284,17 @@ windowsFonts(times = windowsFont("Times New Roman"))
 par(family = "times", font = 1, font.lab = 1, font.axis = 1)
 hist(log(SEO$Wingspan), main = "",
      xlab="Wingspan (centimetres)", 
+     border="bisque4", 
+     col="bisque3", xlim = c(2,6),
+     breaks = 20)
+minor.tick(nx = 4, ny = 2)
+dev.off()
+
+tiff("SEOYears.tiff", width = 7, height = 5, units = 'in', res = 300)
+windowsFonts(times = windowsFont("Times New Roman")) 
+par(family = "times", font = 1, font.lab = 1, font.axis = 1)
+hist(log(SEO$years), main = "",
+     xlab="Time (years)", 
      border="bisque4", 
      col="bisque3", xlim = c(2,6),
      breaks = 20)
@@ -291,6 +335,17 @@ hist(log(ebird$Wingspan), main = "",
 minor.tick(nx = 4, ny = 2)
 dev.off()
 
+tiff("eBirdYears.tiff", width = 7, height = 5, units = 'in', res = 300)
+windowsFonts(times = windowsFont("Times New Roman")) 
+par(family = "times", font = 1, font.lab = 1, font.axis = 1)
+hist(log(ebird$year), main = "",
+     xlab="Time (years)", 
+     border="bisque4", 
+     col="bisque3", xlim = c(2,6),
+     breaks = 20)
+minor.tick(nx = 4, ny = 2)
+dev.off()
+
 # AVIS
 tiff("AVISGeodistribution.tiff", width = 7, height = 5, units = 'in', res = 300)
 windowsFonts(times = windowsFont("Times New Roman")) 
@@ -319,6 +374,17 @@ windowsFonts(times = windowsFont("Times New Roman"))
 par(family = "times", font = 1, font.lab = 1, font.axis = 1)
 hist(log(AVIS$Wingspan), main = "",
      xlab="Wingspan (centimetres)", 
+     border="bisque4", 
+     col="bisque3", xlim = c(2,6),
+     breaks = 20)
+minor.tick(nx = 4, ny = 2)
+dev.off()
+
+tiff("AVISYears.tiff", width = 7, height = 5, units = 'in', res = 300)
+windowsFonts(times = windowsFont("Times New Roman")) 
+par(family = "times", font = 1, font.lab = 1, font.axis = 1)
+hist(log(AVIS$Fecha), main = "",
+     xlab="Time (years)", 
      border="bisque4", 
      col="bisque3", xlim = c(2,6),
      breaks = 20)
